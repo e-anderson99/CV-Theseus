@@ -2,16 +2,16 @@ import RPi.GPIO as GPIO
 import time
 
 # --- Pin Definitions ---
-AIN1 = 20   # Left motor direction
+AIN1 = 20   # right motor
 AIN2 = 21
-PWMA = 19   # Left motor speed
+PWMA = 19  # right motor speed
 
-BIN1 = 7   # Right motor direction
+BIN1 = 7   # left motor direction
 BIN2 = 8
-PWMB = 13   # Right motor speed
+PWMB = 13   # left motor speed
 
 
-SPEED = 70  # Default PWM duty cycle (0-100)
+SPEED = 20  # Default PWM duty cycle (0-100)
 TURN_TIME  = 0.45  # Tune until turns are ~90 degrees
 STEP_TIME  = 0.3   # One forward step duration
 

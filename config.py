@@ -4,7 +4,7 @@ LEFT_BACKWARD  = 8
 RIGHT_FORWARD  = 20
 RIGHT_BACKWARD  = 21
 LEFT_PWM_PIN   = 13
-RIGHT_PWM_PIN  = 19
+RIGHT_PWM_PIN  = 12
 
 MOTOR_SPEED    = 70   # PWM duty cycle (0-100)
 TURN_DURATION  = 0.45 # seconds for a 90° turn (tune this!)
