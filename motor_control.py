@@ -10,7 +10,6 @@ BIN1 = 7   # Right motor direction
 BIN2 = 8
 PWMB = 13   # Right motor speed
 
-STBY = 27   # Standby pin
 
 SPEED = 70  # Default PWM duty cycle (0-100)
 TURN_TIME  = 0.45  # Tune until turns are ~90 degrees
@@ -20,11 +19,9 @@ class MotorController:
     def __init__(self):
         GPIO.setmode(GPIO.BCM)
 
-        for pin in [AIN1, AIN2, PWMA, BIN1, BIN2, PWMB, STBY]:
+        for pin in [AIN1, AIN2, PWMA, BIN1, BIN2, PWMB]:
             GPIO.setup(pin, GPIO.OUT)
 
-        # Enable the driver (take out of standby)
-        GPIO.output(STBY, GPIO.HIGH)
 
         # Set up PWM on speed pins
         self.pwm_a = GPIO.PWM(PWMA, 1000)  # 1kHz
@@ -33,14 +30,14 @@ class MotorController:
         self.pwm_b.start(0)
 
     def _left(self, forward: bool, speed: int):
-        GPIO.output(AIN1, GPIO.HIGH if forward else GPIO.LOW)
-        GPIO.output(AIN2, GPIO.LOW  if forward else GPIO.HIGH)
-        self.pwm_a.ChangeDutyCycle(speed)
-
-    def _right(self, forward: bool, speed: int):
         GPIO.output(BIN1, GPIO.HIGH if forward else GPIO.LOW)
         GPIO.output(BIN2, GPIO.LOW  if forward else GPIO.HIGH)
         self.pwm_b.ChangeDutyCycle(speed)
+
+    def _right(self, forward: bool, speed: int):
+        GPIO.output(AIN1, GPIO.HIGH if forward else GPIO.LOW)
+        GPIO.output(AIN2, GPIO.LOW  if forward else GPIO.HIGH)
+        self.pwm_a.ChangeDutyCycle(speed)
 
     def move_forward(self, duration=STEP_TIME):
         self._left(True,  SPEED)
@@ -74,7 +71,6 @@ class MotorController:
 
     def cleanup(self):
         self.stop()
-        GPIO.output(STBY, GPIO.LOW)  # Put driver back in standby
         self.pwm_a.stop()
         self.pwm_b.stop()
         GPIO.cleanup()
