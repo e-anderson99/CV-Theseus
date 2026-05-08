@@ -18,6 +18,8 @@ Returns a list of arrow dicts:
     }
 """
  
+from __future__ import annotations
+ 
 import cv2
 import numpy as np
  
@@ -129,9 +131,16 @@ def detect_arrows(frame: np.ndarray) -> list[dict]:
         cy = int(M["m01"] / M["m00"])
         centroid = (cx, cy)
  
-        # ── Arrow tip = hull point farthest from centroid ──────────────────
+        # ── Arrow tip = hull point farthest from the defect midpoint ──────
+        # The two armpit defects sit at the base of the arrowhead, so their
+        # midpoint is a reliable "base" reference — the true tip is always
+        # the hull point farthest from it, regardless of tail shape.
         hull_pts = cv2.convexHull(cnt, returnPoints=True).reshape(-1, 2)
-        dists = np.linalg.norm(hull_pts - np.array([cx, cy]), axis=1)
+        mid_defect = np.array([
+            (sig_defect_pts[0][0] + sig_defect_pts[1][0]) / 2,
+            (sig_defect_pts[0][1] + sig_defect_pts[1][1]) / 2,
+        ])
+        dists = np.linalg.norm(hull_pts - mid_defect, axis=1)
         tip = tuple(hull_pts[int(np.argmax(dists))].tolist())
  
         # ── Direction ──────────────────────────────────────────────────────
